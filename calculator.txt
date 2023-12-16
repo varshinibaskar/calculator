@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Basic Calculator</title>
+  <link rel="stylesheet" href="styles.css"> <!-- Link to your CSS file -->
+</head>
+<body>
+  <div class="calculator">
+    <input type="text" id="display" readonly>
+    <div class="buttons">
+      <button class="operator" value="+">+</button>
+      <button class="operator" value="-">-</button>
+      <button class="operator" value="*">&times;</button>
+      <button class="operator" value="/">/</button>
+      <button class="number" value="7">7</button>
+      <button class="number" value="8">8</button>
+      <button class="number" value="9">9</button>
+      <button class="number" value="4">4</button>
+      <button class="number" value="5">5</button>
+      <button class="number" value="6">6</button>
+      <button class="number" value="1">1</button>
+      <button class="number" value="2">2</button>
+      <button class="number" value="3">3</button>
+      <button class="number" value="0">0</button>
+      <button id="calculate">=</button>
+      <button id="clear">C</button>
+    </div>
+  </div>
+  <script src="script.js"></script> <!-- Link to your JavaScript file -->
+</body>
+</html>
+.calculator {
+  width: 250px;
+  margin: 0 auto;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+input[type="text"] {
+  width: 100%;
+  margin-bottom: 10px;
+  padding: 10px;
+}
+
+.buttons {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 5px;
+}
+
+button {
+  padding: 10px;
+  font-size: 18px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #ddd;
+}
+document.addEventListener("DOMContentLoaded", function() {
+  const display = document.getElementById("display");
+  const numbers = document.querySelectorAll(".number");
+  const operators = document.querySelectorAll(".operator");
+  const calculate = document.getElementById("calculate");
+  const clear = document.getElementById("clear");
+
+  let currentInput = "";
+  let firstOperand = null;
+  let operator = null;
+
+  numbers.forEach(number => {
+    number.addEventListener("click", function() {
+      currentInput += this.value;
+      display.value = currentInput;
+    });
+  });
+
+  operators.forEach(op => {
+    op.addEventListener("click", function() {
+      if (currentInput !== "") {
+        if (firstOperand === null) {
+          firstOperand = parseFloat(currentInput);
+        } else if (operator) {
+          const result = performCalculation(firstOperand, parseFloat(currentInput), operator);
+          display.value = result;
+          firstOperand = result;
+        }
+        operator = this.value;
+        currentInput = "";
+      }
+    });
+  });
+
+  calculate.addEventListener("click", function() {
+    if (firstOperand && operator && currentInput !== "") {
+      const result = performCalculation(firstOperand, parseFloat(currentInput), operator);
+      display.value = result;
+      firstOperand = null;
+      operator = null;
+      currentInput = result.toString();
+    }
+  });
+
+  clear.addEventListener("click", function() {
+    display.value = "";
+    currentInput = "";
+    firstOperand = null;
+    operator = null;
+  });
+
+  function performCalculation(num1, num2, operator) {
+    switch (operator) {
+      case "+":
+        return num1 + num2;
+      case "-":
+        return num1 - num2;
+      case "*":
+        return num1 * num2;
+      case "/":
+        return num1 / num2;
+      default:
+        return null;
+    }
+  }
+});
